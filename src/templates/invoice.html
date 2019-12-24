@@ -1,0 +1,140 @@
+<head>
+  <style>
+    html,
+    body {
+      font-family: sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .container {
+      padding: 0 64px;
+    }
+
+    section {
+      display: flex;
+    }
+
+    .flex-30 {
+      flex: 0 1 30%;
+    }
+    .flex-40 {
+      flex: 0 1 40%;
+    }
+    .flex-50 {
+      flex: 0 1 50%;
+    }
+    .flex-60 {
+      flex: 0 1 60%;
+    }
+    .flex-70 {
+      flex: 0 1 70%;
+    }
+
+    table {
+      width: 100%;
+      padding: 8px 0;
+    }
+
+    th:first-child,
+    td:first-child {
+      width: calc(100% - 210px);
+    }
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 105px;
+    }
+
+    table > tbody > tr:nth-child(odd) > td {
+      background-color: #dadada;
+    }
+
+    table > tbody > tr > td:nth-child(1) {
+      text-align: left;
+    }
+    table > tbody > tr > td:nth-child(2),
+    table > tbody > tr > td:nth-child(3) {
+      text-align: right;
+    }
+
+    table > tbody > tr:last-child > td {
+      text-align: right;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section>
+      <h1 class="flex-60">
+        Rechnung {{uniqueId}}
+      </h1>
+      <p class="flex-40" style="text-align:right">
+        <b>Zeitraum:</b> {{billingYear}}-{{billingMonth}}<br />
+        <b>Rechnungsdatum:</b> {{invoiceDate}}
+      </p>
+    </section>
+    <hr />
+    <section>
+      <p class="flex-50">
+        <b>Freiberufler</b><br />
+        {{personalData.name}}<br />
+        {{personalData.addressLine1}}<br />
+        {{personalData.addressLine2}}<br />
+        <a href="mailto:{{contactInfo.email}}">{{contactInfo.email}}</a><br />
+        <a href="tel:{{contactInfo.tel}}">{{contactInfo.tel}}</a><br />
+      </p>
+      <p class="flex-50">
+        <b>Kunden</b><br />
+        {{customerData.organization}}<br />
+        {{customerData.name}}<br />
+        {{customerData.addressLine1}}<br />
+        {{customerData.addressLine2}}
+      </p>
+    </section>
+    <section>
+      <p>
+        <b>Steuernummer:</b> {{taxData.taxId}}<br />
+        <!-- no vat id? we assume small business -->
+        {{#if taxData.vatId}}
+        <b>Ust-IdNr:</b> {{taxData.vatId}} {{else}}
+        <em
+          >- Der ausgewiesene Betrag enthält gemäß § 19 UStG keine
+          Umsatzsteuer.</em
+        >
+        {{/if}}
+      </p>
+    </section>
+    <hr />
+    <section>
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Leistung</th>
+            <th style="text-align:right">Anzahl (STD)</th>
+            <th style="text-align:right">Betrag (EUR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each lines}}
+          <tr>
+            {{#each this}}
+            <td>{{this}}</td>
+            {{/each}}
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </section>
+    <hr />
+    <section>
+      <p>
+        <b>Bank:</b> {{bankData.bankName}}<br />
+        <b>IBAN:</b> {{bankData.iban}}<br />
+        <b>BIC:</b> {{bankData.bic}}
+      </p>
+    </section>
+  </div>
+</body>
