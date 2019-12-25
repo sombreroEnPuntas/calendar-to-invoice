@@ -53,10 +53,7 @@ const userInputs: UserInputs = require('yargs')
     'Usage: --billingMonth [MM] --billingYear [YYYY] --hourlyRate [number] --invoiceCount [number] --invoiceDate [YYYY-MM-DD]',
   )
   .default({
-    billingMonth: '01',
-    billingYear: '2019',
     hourlyRate: 65,
-    invoiceCount: '01',
     invoiceDate: getDate(new Date()),
   })
   .demandOption([
