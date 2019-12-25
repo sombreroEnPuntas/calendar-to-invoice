@@ -18,9 +18,22 @@ Connect to a calendar app to obtain billable hours, and build monthly PDF Invoic
 - YOU ARE AWARE OF THE REQUIREMENTS AND OBLIGATIONS THAT APPLY ON YOUR CASE  
   (this is not a tax advisor service, and it might be outdated or inaccurate)
 - all billable hours are events on a calendar
-- calendar is in ics format
+- calendar is in google calendar
+- **WARNING:** setting up credentials to your google account will grant read only access to your calendar.  
+   MAKE SURE YOU ARE ALLOWED TO DO THIS, AND TAKE THE NECESSARY PRECAUTIONS  
+   (don't share credentials and make sure the data retrieved is not publicly accessible)
 
 ## Project
+
+### Usage
+
+1. Checkout project locally, on `PROJECT_PATH` (we'll need this path)
+1. Set up the specified data [`here`](src/loadData.ts), as json files on `[PROJECT_PATH]/data/`
+1. Go to [google calendar developer guides](https://developers.google.com/calendar/quickstart/nodejs) and login with your account  
+   (if it is a manged account, ask to your admin first ;) )
+1. Follow instructions to set up calendar API credentials, you'll get a `credentials.json` file
+1. Save it on `[PROJECT_PATH]/data/googleClient/credentials.json`
+1. Run `yarn dev --billingYear 2019 --billingMonth 12 --invoiceCount 01` to get an invoice
 
 ### TODOs
 
@@ -28,14 +41,15 @@ Level 1
 
 - [ ] implement better logs!
 - [ ] implement error handling!
+- [ ] drop intermediate JSON files? Those are not really needed...
 
 Level 2
 
-- [ ] write a better `google-client` implementation, that saves to ics
-- [ ] write an `ics` loader
-- [ ] write an `html-to-pdf` module?
+- [ ] write a better `google-client` implementation
+- [ ] write an `ics` loader (couldn't find nice ones out there)
+- [ ] write an `html-to-pdf` module? Using `puppeteer` currently, but does not support all `css` used :'(
 
 Level 3
 
-- [ ] write an interface 🤖
 - [ ] write a `configuration` module to populate data folder and set google credentials
+- [ ] write a (friendly) interface 🤖

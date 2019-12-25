@@ -5,8 +5,9 @@
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "googleapis": "^46.0.0",
