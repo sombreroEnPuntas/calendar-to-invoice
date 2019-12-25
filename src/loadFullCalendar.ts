@@ -4,7 +4,7 @@ import { execFileSync } from 'child_process'
 export interface FullCalendar {
   [uid: string]: { end: any; start: any; summary: string; type: string }
 }
-const googleClientPath = 'googleClient/index.js'
+const googleClientPath = 'src/googleClient/index.js'
 const getFullCalendarFilePath = (
   periodStart: string,
   periodEnd: string,

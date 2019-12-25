@@ -1,14 +1,16 @@
 
+# LOCAL DATA #
+##############
+data/
+out/
+
 # BUILD #
 #########
-data/
 dist/
-out/
 
 
 # DEPENDENCIES #
 ################
-googleClient/
 node_modules/
 
 # Packages #
