@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Generated from: https://developers.google.com/calendar/quickstart/nodejs
 const fs = require('fs')
 const readline = require('readline')

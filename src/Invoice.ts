@@ -61,13 +61,13 @@ class Invoice {
     Object.keys(fullCalendar).map(key => {
       if (
         fullCalendar[key].type === 'VEVENT' &&
-        getMonth(fullCalendar[key].start) === this.billingMonth &&
-        getYear(fullCalendar[key].start) === this.billingYear
+        getMonth(new Date(fullCalendar[key].start)) === this.billingMonth &&
+        getYear(new Date(fullCalendar[key].start)) === this.billingYear
       ) {
         const title = fullCalendar[key].summary
         const duration = getDuration(
-          fullCalendar[key].start,
-          fullCalendar[key].end,
+          new Date(fullCalendar[key].start),
+          new Date(fullCalendar[key].end),
         )
         const cost = duration * this.hourlyRate
 
