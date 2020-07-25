@@ -2,16 +2,22 @@
 import { getDuration, getMonth, getYear } from './timeHandlers'
 import { FullCalendar } from './loadFullCalendar'
 
-type InvoiceLine = [string, number, number]
+interface InvoiceLine {
+  cost: number
+  duration?: number
+  title: string
+}
 
 interface Invoice {
   billingMonth: string
   billingYear: string
-  hourlyRate: number
+  currency: string
   invoiceCount: string
   invoiceDate: string
+  isHourly: boolean
   lines: InvoiceLine[]
   open: boolean
+  rate: number
   totalCost: number
   totalHours: number
   uniqueId: string
@@ -20,19 +26,23 @@ class Invoice {
   constructor(
     billingMonth: string,
     billingYear: string,
-    hourlyRate: number,
+    rate: string,
     invoiceCount: string,
     invoiceDate: string,
+    isHourly: boolean,
+    currency: string,
   ) {
     this.billingMonth = billingMonth
     this.billingYear = billingYear
-    this.hourlyRate = hourlyRate
+    this.rate = parseInt(rate)
     this.invoiceCount = invoiceCount
     this.invoiceDate = invoiceDate
+    this.isHourly = !!isHourly
     this.lines = []
     this.open = true
     this.totalCost = 0
     this.totalHours = 0
+    this.currency = currency
 
     // Yeah, I know. not really unique :0
     this.uniqueId = `#${billingYear}-${billingMonth}-inv-${invoiceCount}`
@@ -50,8 +60,9 @@ class Invoice {
       )
     }
 
-    this.totalHours = this.totalHours + line[1]
-    this.totalCost = this.totalCost + line[2]
+    if (this.isHourly) this.totalHours = this.totalHours + line.duration
+
+    this.totalCost = this.totalCost + line.cost
     this.lines.push(line)
 
     console.log(`Added line #${this.lines.length} to Invoice ${this.uniqueId}.`)
@@ -69,9 +80,9 @@ class Invoice {
           new Date(fullCalendar[key].start),
           new Date(fullCalendar[key].end),
         )
-        const cost = duration * this.hourlyRate
+        const cost = duration * this.rate
 
-        this.addLine([title, duration, cost])
+        this.addLine({ cost, duration, title })
       }
     })
     console.log(`Parsed FullCalendar events into Invoice lines.`)
@@ -85,7 +96,11 @@ class Invoice {
       )
     }
 
-    this.lines.push(['Insgesamt', this.totalHours, this.totalCost])
+    this.lines.push({
+      cost: this.totalCost,
+      ...(this.isHourly && { duration: this.totalHours }),
+      title: 'Insgesamt',
+    })
     this.open = false
 
     console.log(`Closed Invoice ${this.uniqueId}.`)

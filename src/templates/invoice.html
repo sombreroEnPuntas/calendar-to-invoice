@@ -1,18 +1,28 @@
 <head>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/terminal.css@0.7.1/dist/terminal.min.css"
+  />
+
   <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
     html,
     body {
-      font-family: sans-serif;
-      font-weight: 500;
-      font-size: 14px;
+      max-width: 210mm;
+      margin: 0 auto;
     }
 
     .container {
-      padding: 0 64px;
+      padding: 14px 64px;
     }
 
     section {
       display: flex;
+      justify-content: space-between;
     }
 
     .flex-30 {
@@ -27,24 +37,8 @@
     .flex-60 {
       flex: 0 1 60%;
     }
-    .flex-70 {
-      flex: 0 1 70%;
-    }
-
-    table {
-      width: 100%;
-      padding: 8px 0;
-    }
-
-    th:first-child,
-    td:first-child {
-      width: calc(100% - 210px);
-    }
-    th:nth-child(2),
-    td:nth-child(2),
-    th:nth-child(3),
-    td:nth-child(3) {
-      width: 105px;
+    .flex-100 {
+      flex: 0 1 100%;
     }
 
     table > tbody > tr:nth-child(odd) > td {
@@ -53,6 +47,7 @@
 
     table > tbody > tr > td:nth-child(1) {
       text-align: left;
+      font-weight: 400;
     }
     table > tbody > tr > td:nth-child(2),
     table > tbody > tr > td:nth-child(3) {
@@ -83,8 +78,8 @@
         {{personalData.name}}<br />
         {{personalData.addressLine1}}<br />
         {{personalData.addressLine2}}<br />
-        <a href="mailto:{{contactInfo.email}}">{{contactInfo.email}}</a><br />
-        <a href="tel:{{contactInfo.tel}}">{{contactInfo.tel}}</a><br />
+        <a href="mailto:{{contactData.email}}">{{contactData.email}}</a><br />
+        <a href="tel:{{contactData.tel}}">{{contactData.tel}}</a><br />
       </p>
       <p class="flex-50">
         <b>Kunden</b><br />
@@ -100,10 +95,9 @@
         <!-- no vat id? we assume small business -->
         {{#if taxData.vatId}}
         <b>Ust-IdNr:</b> {{taxData.vatId}} {{else}}
-        <em
-          >- Der ausgewiesene Betrag enthält gemäß § 19 UStG keine
-          Umsatzsteuer.</em
-        >
+        <em>
+          - Der ausgewiesene Betrag enthält gemäß § 19 UStG keine Umsatzsteuer.
+        </em>
         {{/if}}
       </p>
     </section>
@@ -113,16 +107,20 @@
         <thead>
           <tr>
             <th style="text-align:left">Leistung</th>
+            {{#if isHourly}}
             <th style="text-align:right">Anzahl (STD)</th>
-            <th style="text-align:right">Betrag (EUR)</th>
+            {{/if}}
+            <th style="text-align:right">Betrag ({{currency}})</th>
           </tr>
         </thead>
         <tbody>
           {{#each lines}}
           <tr>
-            {{#each this}}
-            <td>{{this}}</td>
-            {{/each}}
+            <td>{{this.title}}</td>
+            {{#if isHourly}}
+            <td>{{this.duration}}</td>
+            {{/if}}
+            <td>{{this.cost}}</td>
           </tr>
           {{/each}}
         </tbody>
@@ -130,11 +128,38 @@
     </section>
     <hr />
     <section>
-      <p>
-        <b>Bank:</b> {{bankData.bankName}}<br />
-        <b>IBAN:</b> {{bankData.iban}}<br />
-        <b>BIC:</b> {{bankData.bic}}
-      </p>
+      {{#if paymentData.eur}}
+      <article class="flex-50">
+        <h3>EU bank details</h3>
+        <p>
+          <b>Bank:</b> {{paymentData.eur.bankName}}<br />
+          <b>IBAN:</b> {{paymentData.eur.iban}}<br />
+          <b>BIC:</b> {{paymentData.eur.bic}}
+        </p>
+      </article>
+      {{/if}} {{#if paymentData.usd}}
+      <article class="flex-50">
+        <h3>USA bank details</h3>
+        <p>
+          <b>Wire transfer #: </b>
+          {{paymentData.usd.wireTransferNumber}}<br />
+          <b>ACH/ABA: </b>
+          {{paymentData.usd.routingNumber}}<br />
+          <b>Account #: </b> {{paymentData.usd.accountNumber}}<br />
+          <b>SWIFT/BIC: </b> {{paymentData.usd.bic}}<br />
+        </p>
+      </article>
+      {{/if}}
     </section>
+    {{#if paymentData.paypal}}
+    <section>
+      <article class="flex-100">
+        <h3>Paypal</h3>
+        <p>
+          <a href="https://{{paymentData.paypal}}">{{paymentData.paypal}}</a>
+        </p>
+      </article>
+    </section>
+    {{/if}}
   </div>
 </body>

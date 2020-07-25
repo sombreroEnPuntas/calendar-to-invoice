@@ -1,9 +1,18 @@
 import fs from 'fs'
 
-interface BankData {
-  bankName: string
-  bic: string
-  iban: string
+interface PaymentData {
+  eur: {
+    bankName: string
+    bic: string
+    iban: string
+  }
+  paypal: string
+  usd: {
+    accountNumber: string
+    bic: string
+    routingNumber: string
+    wireTransferNumber: string
+  }
 }
 interface ContactData {
   email: string
@@ -19,6 +28,8 @@ interface PersonalData {
   addressLine1: string
   addressLine2: string
   name: string
+  professionDescription: string
+  professionTitle: string
   shortName: string
 }
 interface TaxData {
@@ -26,22 +37,29 @@ interface TaxData {
   vatId: string
 }
 interface Data {
-  bankData: BankData
   contactData: ContactData
   customerData: CustomerData
+  paymentData: PaymentData
   personalData: PersonalData
   taxData: TaxData
 }
 
-export const loadData = (): Data => {
+export const loadData = (
+  fileList = [
+    'contactData',
+    'customerData',
+    'paymentData',
+    'personalData',
+    'taxData',
+  ],
+): Data => {
   const data = {}
-  ;['bankData', 'contactData', 'customerData', 'personalData', 'taxData'].map(
-    entity => {
-      const file = fs.readFileSync(`data/${entity}.json`, 'utf8')
 
-      data[entity] = JSON.parse(file)
-    },
-  )
+  fileList.map(entity => {
+    const file = fs.readFileSync(`data/${entity}.json`, 'utf8')
+
+    data[entity] = JSON.parse(file)
+  })
 
   return data as Data
 }

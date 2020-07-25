@@ -27,13 +27,13 @@ Connect to a calendar app to obtain billable hours, and build monthly PDF Invoic
 
 ### Usage
 
-1. Checkout project locally, on `PROJECT_PATH` (we'll need this path)
-1. Set up the specified data [`here`](src/loadData.ts), as json files on `[PROJECT_PATH]/data/`
+1. Checkout project locally, on `PROJECT_PATH` (we'll need to remember this path)
+1. Set up the data specified [`here`](src/loadData.ts), as json files on `[PROJECT_PATH]/data/`
 1. Go to [google calendar developer guides](https://developers.google.com/calendar/quickstart/nodejs) and login with your account  
    (if it is a manged account, ask to your admin first ;) )
 1. Follow instructions to set up calendar API credentials, you'll get a `credentials.json` file
 1. Save it on `[PROJECT_PATH]/data/googleClient/credentials.json`
-1. Run `yarn dev --billingYear 2019 --billingMonth 12 --invoiceCount 01` to get an invoice
+1. Run `yarn dev --billingYear 2019 --billingMonth 12 --rate 65 --invoiceCount 01` to get an invoice
 
 ### TODOs
 

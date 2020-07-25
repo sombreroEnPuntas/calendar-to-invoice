@@ -10,6 +10,9 @@ const invoiceTemplateFilePath = `src/templates/invoice.html`
 
 const getOutputPDFFilePath = (uniqueId: string, shortName: string): string =>
   `out/Invoice ${uniqueId} - ${shortName}.pdf`
+const getOutputHTMLFilePath = (uniqueId: string, shortName: string): string =>
+  `out/Invoice ${uniqueId} - ${shortName}.html`
+
 /**
  * Write an Invoice in PDF format
  * @param {Invoice} invoice - Invoice to be exported
@@ -20,6 +23,8 @@ export const writeInvoiceToPDF = async ({
   invoiceDate,
   lines,
   uniqueId,
+  isHourly,
+  currency,
 }: Invoice): Promise<void> => {
   console.log(`Preparing Invoice ${uniqueId} to be exported as PDF...`)
 
@@ -30,6 +35,8 @@ export const writeInvoiceToPDF = async ({
     invoiceDate,
     lines,
     uniqueId,
+    currency,
+    isHourly,
   }
   console.log(`Data loaded successfully.`)
 
@@ -38,6 +45,17 @@ export const writeInvoiceToPDF = async ({
   const html = template(data)
   console.log(`Template ${invoiceTemplateFilePath} parsed successfully.`)
 
+  fs.writeFileSync(
+    getOutputHTMLFilePath(uniqueId, data.personalData.shortName),
+    html,
+  )
+  console.log(
+    `Exported Invoice ${uniqueId} as ${getOutputHTMLFilePath(
+      uniqueId,
+      data.personalData.shortName,
+    )}.`,
+  )
+
   const browser = await Puppeteer.launch()
   const page = await browser.newPage()
 
@@ -45,6 +63,7 @@ export const writeInvoiceToPDF = async ({
   await page.emulateMedia('screen')
   await page.pdf({
     path: getOutputPDFFilePath(uniqueId, data.personalData.shortName),
+    preferCSSPageSize: true,
   })
 
   await browser.close()

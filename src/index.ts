@@ -5,44 +5,62 @@ import { writeInvoiceToPDF } from './writeInvoiceToPDF'
 
 // Modules
 import Invoice from './Invoice'
+import { loadData } from './loadData'
 
 interface UserInputs {
   billingMonth: string
   billingYear: string
-  hourlyRate: number
+  currency: string
   invoiceCount: string
   invoiceDate: string
+  isHourly: boolean
+  rate: string
 }
 
 const app = ({
   billingMonth,
   billingYear,
-  hourlyRate,
+  currency,
   invoiceCount,
   invoiceDate,
+  isHourly,
+  rate,
 }: UserInputs): void => {
-  const NovemberInvoice = new Invoice(
+  const CurrentInvoice = new Invoice(
     billingMonth,
     billingYear,
-    hourlyRate,
+    rate,
     invoiceCount,
     invoiceDate,
+    isHourly,
+    currency,
   )
 
-  const billingPeriodStart = getDate(new Date(`${billingYear}-${billingMonth}`))
-  const billingPeriodEnd = getFutureDate(
-    new Date(`${billingYear}-${billingMonth}`),
-    1,
-    'month',
-  )
+  if (isHourly) {
+    const billingPeriodStart = getDate(
+      new Date(`${billingYear}-${billingMonth}`),
+    )
+    const billingPeriodEnd = getFutureDate(
+      new Date(`${billingYear}-${billingMonth}`),
+      1,
+      'month',
+    )
 
-  const fullCalendar = loadFullCalendar(billingPeriodStart, billingPeriodEnd)
+    const fullCalendar = loadFullCalendar(billingPeriodStart, billingPeriodEnd)
 
-  NovemberInvoice.getLinesFromFullCalendar(fullCalendar)
+    CurrentInvoice.getLinesFromFullCalendar(fullCalendar)
+  } else {
+    const title = loadData(['personalData']).personalData.professionDescription
 
-  NovemberInvoice.close()
+    CurrentInvoice.addLine({
+      cost: parseInt(rate),
+      title,
+    })
+  }
 
-  writeInvoiceToPDF(NovemberInvoice)
+  CurrentInvoice.close()
+
+  writeInvoiceToPDF(CurrentInvoice)
 }
 
 const userInputs: UserInputs = require('yargs')
@@ -50,16 +68,16 @@ const userInputs: UserInputs = require('yargs')
     'parse-numbers': false,
   })
   .usage(
-    'Usage: --billingMonth [MM] --billingYear [YYYY] --hourlyRate [number] --invoiceCount [number] --invoiceDate [YYYY-MM-DD]',
+    'Usage: --billingMonth [MM] --billingYear [YYYY] --rate [number] --invoiceCount [number] --invoiceDate [YYYY-MM-DD] --isHourly [boolean] --currency [string]',
   )
   .default({
-    hourlyRate: 65,
     invoiceDate: getDate(new Date()),
+    currency: 'EUR',
   })
   .demandOption([
     'billingMonth',
     'billingYear',
-    'hourlyRate',
+    'rate',
     'invoiceCount',
     'invoiceDate',
   ]).argv
