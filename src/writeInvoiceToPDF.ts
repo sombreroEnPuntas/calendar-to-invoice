@@ -60,7 +60,6 @@ export const writeInvoiceToPDF = async ({
   const page = await browser.newPage()
 
   await page.setContent(html)
-  await page.emulateMedia('screen')
   await page.pdf({
     path: getOutputPDFFilePath(uniqueId, data.personalData.shortName),
     preferCSSPageSize: true,
